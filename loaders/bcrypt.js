@@ -7,4 +7,10 @@ const encryptPass = async (rawPass) => {
   return encryptedPass;
 };
 
-module.exports = Object.freeze({ encryptPass });
+const comparePassword = async (rawPass, encryptPass) => {
+  const result = bcrypt.compareSync(rawPass, encryptPass);
+
+  return result;
+};
+
+module.exports = Object.freeze({ encryptPass, comparePassword });

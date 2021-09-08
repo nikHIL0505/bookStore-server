@@ -1,10 +1,49 @@
-const express = require("express");
-const { encryptPass } = require("../../../loaders/bcrypt");
+const { comparePassword } = require("../../../loaders/bcrypt");
 const SellerModel = require("../../../mongo/models/User/sellerModel");
 const logger = require("../../../loaders/logger");
 const makeHTTPResponse = require("../../../helpers/makeHTTPresponse");
+const authQueries = require("../../../mongo/queries/authQueries");
 
-const login = async (req, res) => {};
+const login = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    let queryRes = await authQueries.getLoginCredentials(
+      username.toLowerCase()
+    );
+
+    if (!queryRes.user) {
+      makeHTTPResponse({
+        res,
+        status: 400,
+        body: { message: "Invalid User Credentials !" },
+      });
+    }
+
+    const isPasswordMatch = comparePassword(password, queryRes.user.password);
+
+    if (!isPasswordMatch) {
+      makeHTTPResponse({
+        res,
+        status: 400,
+        body: { message: "Invalid User Credentials.!" },
+      });
+    }
+
+    makeHTTPResponse({
+      res,
+      status: "200",
+      body: { message: "success" },
+    });
+  } catch (err) {
+    console.log(err);
+    makeHTTPResponse({
+      res,
+      status: 500,
+      body: { message: "Internal Server Error." },
+    });
+  }
+};
 
 const register = async (req, res) => {
   try {

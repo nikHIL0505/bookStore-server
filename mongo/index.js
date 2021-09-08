@@ -2,9 +2,7 @@ const mongoose = require("mongoose");
 
 const makeConnection = async () => {
   try {
-    await mongoose.connect(
-      "mongodb+srv://nikhil05:bookStoreApp@cluster0.rjuqf.mongodb.net/bookStoreDB?retryWrites=true&w=majority"
-    );
+    await mongoose.connect(process.env.MONGO_URI);
     return true;
   } catch (error) {
     console.log(error);
